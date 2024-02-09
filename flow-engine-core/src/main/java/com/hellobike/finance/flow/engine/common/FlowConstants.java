@@ -1,7 +1,7 @@
 package com.hellobike.finance.flow.engine.common;
 
 /**
- * @author xulei
+ * @author 徐磊080
  */
 public interface FlowConstants {
 
@@ -11,7 +11,9 @@ public interface FlowConstants {
     String NODES = "nodes";
     String NODE = "node";
     String NAME = "name";
+    String CLASS_NAME = "className";
     String TYPE = "type";
+    String DESC = "desc";
 
     /**
      * 连线

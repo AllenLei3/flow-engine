@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow name="70001LoanFlow">
+    <nodes>
+        <node name = 'A' className = 'com.hellobike.finance.flow.engine.load.node.ANode' desc = '还款申请'/>
+        <node name = 'B' className = 'com.hellobike.finance.flow.engine.load.node.BNode' type = 'SWITCH' desc = '资方判断'/>
+        <node name = 'C' className = 'com.hellobike.finance.flow.engine.load.node.CNode' desc = '锦程-中智信还款'/>
+        <node name = 'D' className = 'com.hellobike.finance.flow.engine.load.node.DNode' type = 'SUSPEND' desc = '锦程-汉辰还款'/>
+        <node name = 'E' className = 'com.hellobike.finance.flow.engine.load.node.ENode' desc = '还款结果回调'/>
+        <node name = 'F' className = 'com.hellobike.finance.flow.engine.load.node.FNode' desc = '还款结果主动查询'/>
+    </nodes>
+    <lines>
+        <line sourceNodeName = 'A' targetNodeName = 'B'/>
+        <line sourceNodeName = 'B' targetNodeName = 'C' switchValue="70001"/>
+        <line sourceNodeName = 'B' targetNodeName = 'D' switchValue="70004" defaultLine="true"/>
+        <line sourceNodeName = 'D' targetNodeName = 'E'/>
+        <line sourceNodeName = 'D' targetNodeName = 'F'/>
+    </lines>
+</flow>

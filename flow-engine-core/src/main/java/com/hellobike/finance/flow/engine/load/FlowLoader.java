@@ -1,21 +1,18 @@
 package com.hellobike.finance.flow.engine.load;
 
-import com.hellobike.finance.flow.engine.config.FlowConfiguration;
+import com.hellobike.finance.flow.engine.common.FlowConfiguration;
 import com.hellobike.finance.flow.engine.exception.FlowLoadException;
-import com.hellobike.finance.flow.engine.load.definition.FlowDefinition;
+import com.hellobike.finance.flow.engine.definition.FlowDefinition;
+import com.hellobike.finance.flow.engine.spi.SPI;
 
 /**
- * @author xulei
+ * @author 徐磊080
  */
+@SPI
 public interface FlowLoader {
 
     /**
-     * 支持文件后缀
-     */
-    String supportFileSuffix();
-
-    /**
-     * 加载流程定义
+     * 加载流程定义文件
      *
      * @param content 文件内容
      * @param configuration 流程全局配置
