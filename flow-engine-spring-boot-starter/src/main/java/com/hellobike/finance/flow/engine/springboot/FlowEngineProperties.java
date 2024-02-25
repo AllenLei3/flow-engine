@@ -3,14 +3,12 @@ package com.hellobike.finance.flow.engine.springboot;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * @author 徐磊080
  */
 @Getter
 @Setter
-@Component
 @ConfigurationProperties("flow.engine")
 public class FlowEngineProperties {
 

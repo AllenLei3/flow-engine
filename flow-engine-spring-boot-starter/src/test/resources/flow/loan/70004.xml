@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow name="70004LoanFlow">
+    <nodes>
+        <node name = 'commonLoanNode' description = '借款通用处理'/>
+        <node name = 'commonLoanFailedNode' description = '借款失败处理'/>
+        <node name = 'uploadGuarantorCreditAgreementNode' type = 'SUSPEND' description = '上传融担【授信协议】'/>
+        <node name = 'guarantorCreditAgreementCallbackNode' type = 'SWITCH' description = '上传融担【授信协议】回调'/>
+        <node name = 'guarantorCreditAgreementJobNode' type = 'SWITCH' description = '上传融担【授信协议】主动查询'/>
+        <node name = 'uploadGuarantorImageNode' type = 'SUSPEND' description = '上传融担【影像资料】'/>
+        <node name = 'guarantorImageCallbackNode' type = 'SWITCH' description = '上传融担【影像资料】回调'/>
+        <node name = 'guarantorImageJobNode' type = 'SWITCH' description = '上传融担【影像资料】主动查询'/>
+        <node name = 'guarantorCreditApplyNode' type = 'SUSPEND' description = '发起融担授信申请'/>
+        <node name = 'guarantorCreditApplyJobNode' type = 'SWITCH' description = '融担授信申请主动查询'/>
+        <node name = 'funderLoanApplyNode' type = 'SUSPEND' description = '发起资方放款申请'/>
+        <node name = 'funderLoanApplyJobNode' type = 'SWITCH' description = '资方放款申请主动查询'/>
+        <node name = 'commonLoanSuccessNode' description = '借款申请成功'/>
+    </nodes>
+    <lines>
+        <line sourceNodeName = 'commonLoanNode' targetNodeName = 'uploadGuarantorCreditAgreementNode'/>
+        <line sourceNodeName = 'uploadGuarantorCreditAgreementNode' targetNodeName = 'guarantorCreditAgreementCallbackNode'/>
+        <line sourceNodeName = 'uploadGuarantorCreditAgreementNode' targetNodeName = 'guarantorCreditAgreementJobNode'/>
+        <line sourceNodeName = 'guarantorCreditAgreementCallbackNode' targetNodeName = 'uploadGuarantorImageNode' switchValue="success"/>
+        <line sourceNodeName = 'guarantorCreditAgreementCallbackNode' targetNodeName = 'commonLoanFailedNode' switchValue="failed" defaultLine="true"/>
+        <line sourceNodeName = 'guarantorCreditAgreementJobNode' targetNodeName = 'uploadGuarantorImageNode' switchValue="success"/>
+        <line sourceNodeName = 'guarantorCreditAgreementJobNode' targetNodeName = 'commonLoanFailedNode' switchValue="failed" defaultLine="true"/>
+        <line sourceNodeName = 'uploadGuarantorImageNode' targetNodeName = 'guarantorImageCallbackNode'/>
+        <line sourceNodeName = 'uploadGuarantorImageNode' targetNodeName = 'guarantorImageJobNode'/>
+        <line sourceNodeName = 'guarantorImageCallbackNode' targetNodeName = 'guarantorCreditApplyNode' switchValue="success"/>
+        <line sourceNodeName = 'guarantorImageCallbackNode' targetNodeName = 'commonLoanFailedNode' switchValue="failed" defaultLine="true"/>
+        <line sourceNodeName = 'guarantorImageJobNode' targetNodeName = 'guarantorCreditApplyNode' switchValue="success"/>
+        <line sourceNodeName = 'guarantorImageJobNode' targetNodeName = 'commonLoanFailedNode' switchValue="failed" defaultLine="true"/>
+        <line sourceNodeName = 'guarantorCreditApplyNode' targetNodeName = 'guarantorCreditApplyJobNode'/>
+        <line sourceNodeName = 'guarantorCreditApplyJobNode' targetNodeName = 'funderLoanApplyNode' switchValue="success"/>
+        <line sourceNodeName = 'guarantorCreditApplyJobNode' targetNodeName = 'commonLoanFailedNode' switchValue="failed" defaultLine="true"/>
+        <line sourceNodeName = 'funderLoanApplyNode' targetNodeName = 'funderLoanApplyJobNode'/>
+        <line sourceNodeName = 'funderLoanApplyJobNode' targetNodeName = 'commonLoanSuccessNode' switchValue="success"/>
+        <line sourceNodeName = 'funderLoanApplyJobNode' targetNodeName = 'commonLoanFailedNode' switchValue="failed" defaultLine="true"/>
+    </lines>
+</flow>

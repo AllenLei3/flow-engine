@@ -181,7 +181,7 @@ public class FlowEngineExecutor {
                     GeneratorMermaidUtils.generatorMermaidFile(file, definition);
                 }
             } catch (Exception loadException) {
-                LOG.warn("加载[{}]文件内容异常!", file.getName());
+                LOG.warn("加载[{}]文件内容异常!", file.getName(), loadException);
             }
         }
     }
