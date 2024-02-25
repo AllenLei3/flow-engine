@@ -1,9 +1,9 @@
-package com.hellobike.finance.flow.engine.spi.load;
+package com.hellobike.finance.flow.engine.spi;
 
 /**
  * @author 徐磊080
  */
-public class InternalLoadStrategy implements LoadStrategy {
+public class InternalSpiLoadStrategy implements SpiLoadStrategy {
 
     @Override
     public int getPriority() {

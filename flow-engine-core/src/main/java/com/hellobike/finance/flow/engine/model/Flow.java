@@ -94,6 +94,7 @@ public final class Flow implements Serializable {
         while (curNode != null && FlowStatus.RUN.equals(response.getStatus())) {
             curNode = curNode.executeAndGetNextNode(context, response);
         }
+        // 正常结束
         if (response.getStatus().equals(FlowStatus.RUN)) {
             response.setStatus(FlowStatus.END);
         }
@@ -156,15 +157,16 @@ public final class Flow implements Serializable {
         List<FlowNode> flowNodes = new ArrayList<>();
         InstanceFactory instanceFactory = FlowServiceLoader.getLoader(InstanceFactory.class).getExtension();
         for (FlowNodeDefinition flowNodeDefinition : definition.getFlowNodeDefinitions()) {
-            FlowNode flowNode = (FlowNode) instanceFactory.getInstance(flowNodeDefinition.getClassName());
+            String nodeName = flowNodeDefinition.getClassName() == null ? flowNodeDefinition.getName() : flowNodeDefinition.getClassName();
+            FlowNode flowNode = (FlowNode) instanceFactory.getInstance(nodeName);
             if (flowNode == null) {
-                throw new FlowParseException("流程[" + name + "]实例化[" + flowNodeDefinition.getType() + "]节点异常!");
+                throw new FlowParseException("流程[" + name + "]实例化[" + nodeName + "]节点异常!");
             }
             try {
                 flowNode.parse(flowNodeDefinition, configuration);
                 flowNodes.add(flowNode);
             } catch (FlowParseException e) {
-                throw new FlowParseException("流程[" + name + "]解析节点异常!", e);
+                throw new FlowParseException("流程[" + name + "]解析[" + nodeName + "]节点异常!", e);
             }
         }
         this.nodes = flowNodes;

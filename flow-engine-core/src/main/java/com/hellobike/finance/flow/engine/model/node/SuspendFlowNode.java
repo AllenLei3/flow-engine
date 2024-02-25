@@ -4,6 +4,7 @@ import com.hellobike.finance.flow.engine.common.FlowConfiguration;
 import com.hellobike.finance.flow.engine.exception.FlowBuildException;
 import com.hellobike.finance.flow.engine.execute.FlowContext;
 import com.hellobike.finance.flow.engine.execute.FlowNodeResult;
+import com.hellobike.finance.flow.engine.execute.FlowResponse;
 import com.hellobike.finance.flow.engine.execute.FlowStatus;
 import com.hellobike.finance.flow.engine.model.Flow;
 
@@ -25,13 +26,9 @@ public abstract class SuspendFlowNode extends FlowNode {
     }
 
     @Override
-    protected void nodeExtension(FlowContext context, FlowNodeResult nodeResult) {
+    protected void nodeExtension(FlowContext context, FlowNodeResult nodeResult, FlowResponse response) {
         nodeResult.setSuspendId(suspendId(context));
-    }
-
-    @Override
-    protected FlowStatus getNodeExecuteStatus() {
-        return FlowStatus.SUSPEND;
+        response.setStatus(FlowStatus.SUSPEND);
     }
 
     /**

@@ -4,6 +4,7 @@ import com.hellobike.finance.flow.engine.common.FlowConfiguration;
 import com.hellobike.finance.flow.engine.exception.FlowBuildException;
 import com.hellobike.finance.flow.engine.execute.FlowContext;
 import com.hellobike.finance.flow.engine.execute.FlowNodeResult;
+import com.hellobike.finance.flow.engine.execute.FlowResponse;
 import com.hellobike.finance.flow.engine.model.Flow;
 import com.hellobike.finance.flow.engine.model.line.FlowLine;
 
@@ -41,12 +42,13 @@ public abstract class SwitchFlowNode extends FlowNode {
     }
 
     @Override
-    protected void nodeExtension(FlowContext context, FlowNodeResult nodeResult) {
+    protected void nodeExtension(FlowContext context, FlowNodeResult nodeResult, FlowResponse response) {
         nodeResult.setSwitchValue(switchValue(context));
     }
 
     @Override
     protected FlowNode getNextNode(FlowContext context) {
+        // TODO 后续可抽象 eg:脚本
         String switchValue = switchValue(context);
         for (FlowLine targetLine : targetLines) {
             if (Objects.equals(switchValue, targetLine.getSwitchValue())) {

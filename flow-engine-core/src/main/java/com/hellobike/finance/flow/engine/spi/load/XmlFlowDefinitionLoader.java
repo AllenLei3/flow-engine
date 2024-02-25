@@ -1,6 +1,5 @@
-package com.hellobike.finance.flow.engine.load;
+package com.hellobike.finance.flow.engine.spi.load;
 
-import com.hellobike.finance.flow.engine.common.FlowConstants;
 import com.hellobike.finance.flow.engine.common.FlowNodeType;
 import com.hellobike.finance.flow.engine.common.FlowConfiguration;
 import com.hellobike.finance.flow.engine.exception.FlowLoadException;
@@ -20,9 +19,9 @@ import java.util.List;
 /**
  * @author 徐磊080
  */
-public class XmlFileFlowLoader implements FlowLoader {
+public class XmlFlowDefinitionLoader implements FlowDefinitionLoader {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(XmlFileFlowLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlFlowDefinitionLoader.class);
 
     @Override
     public FlowDefinition load(String content, FlowConfiguration configuration) throws FlowLoadException {
@@ -33,7 +32,7 @@ public class XmlFileFlowLoader implements FlowLoader {
             throw new FlowLoadException(e);
         }
         Element rootElement = document.getRootElement();
-        String flowName = rootElement.attributeValue(FlowConstants.NAME);
+        String flowName = rootElement.attributeValue(NAME);
         if (flowName == null) {
             throw new FlowLoadException("The flow element must have name attribute!");
         }
@@ -41,21 +40,21 @@ public class XmlFileFlowLoader implements FlowLoader {
         List<FlowLineDefinition> lineDefinitions = new ArrayList<>();
 
         // 解析node
-        Element nodesElement = rootElement.element(FlowConstants.NODES);
+        Element nodesElement = rootElement.element(NODES);
         if (nodesElement != null) {
-            List<Element> nodeList = nodesElement.elements(FlowConstants.NODE);
+            List<Element> nodeList = nodesElement.elements(NODE);
             String name, className, type, description;
             for (Element e : nodeList) {
-                name = e.attributeValue(FlowConstants.NAME);
+                name = e.attributeValue(NAME);
                 if (name == null) {
                     throw new FlowLoadException("The node element must have name attribute! flowName:" + flowName);
                 }
-                className = e.attributeValue(FlowConstants.CLASS_NAME);
-                type = e.attributeValue(FlowConstants.TYPE);
-                description = e.attributeValue(FlowConstants.DESC);
+                className = e.attributeValue(CLASS_NAME);
+                type = e.attributeValue(TYPE);
+                description = e.attributeValue(DESCRIPTION);
                 FlowNodeDefinition nodeDefinition = FlowNodeDefinition.builder()
                         .name(name)
-                        .className(className == null ? name : className)
+                        .className(className)
                         .type(type == null ? FlowNodeType.COMMON.name() : type)
                         .description(description)
                         .build();
@@ -66,22 +65,22 @@ public class XmlFileFlowLoader implements FlowLoader {
         }
 
         // 解析line
-        Element lineElement = rootElement.element(FlowConstants.LINES);
+        Element lineElement = rootElement.element(LINES);
         if (lineElement != null) {
-            List<Element> lineList = lineElement.elements(FlowConstants.LINE);
+            List<Element> lineList = lineElement.elements(LINE);
             String sourceNodeName, targetNodeName, switchValue;
             boolean defaultLine;
             for (Element e : lineList) {
-                sourceNodeName = e.attributeValue(FlowConstants.SOURCE_NODE_NAME);
+                sourceNodeName = e.attributeValue(SOURCE_NODE_NAME);
                 if (sourceNodeName == null) {
                     throw new FlowLoadException("The line element must have sourceNodeName attribute! flowName:" + flowName);
                 }
-                targetNodeName = e.attributeValue(FlowConstants.TARGET_NODE_NAME);
+                targetNodeName = e.attributeValue(TARGET_NODE_NAME);
                 if (targetNodeName == null) {
                     throw new FlowLoadException("The line element must have targetNodeName attribute! flowName:" + flowName);
                 }
-                switchValue = e.attributeValue(FlowConstants.SWITCH_VALUE);
-                defaultLine = Boolean.TRUE.toString().equals(e.attributeValue(FlowConstants.DEFAULT_LINE));
+                switchValue = e.attributeValue(SWITCH_VALUE);
+                defaultLine = Boolean.TRUE.toString().equals(e.attributeValue(DEFAULT_LINE));
                 FlowLineDefinition lineDefinition = FlowLineDefinition.builder()
                         .sourceNodeName(sourceNodeName)
                         .targetNodeName(targetNodeName)

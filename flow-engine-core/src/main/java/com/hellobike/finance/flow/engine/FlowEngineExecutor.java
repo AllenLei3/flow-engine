@@ -9,11 +9,11 @@ import com.hellobike.finance.flow.engine.exception.FlowParseException;
 import com.hellobike.finance.flow.engine.execute.FlowContext;
 import com.hellobike.finance.flow.engine.execute.FlowResponse;
 import com.hellobike.finance.flow.engine.execute.FlowStatus;
-import com.hellobike.finance.flow.engine.load.FlowLoader;
+import com.hellobike.finance.flow.engine.spi.load.FlowDefinitionLoader;
 import com.hellobike.finance.flow.engine.model.Flow;
 import com.hellobike.finance.flow.engine.model.node.FlowNode;
 import com.hellobike.finance.flow.engine.spi.FlowServiceLoader;
-import com.hellobike.finance.flow.engine.storage.FlowContextStorage;
+import com.hellobike.finance.flow.engine.spi.storage.FlowContextStorage;
 import com.hellobike.finance.flow.engine.utils.GeneratorMermaidUtils;
 import com.hellobike.finance.flow.engine.utils.PathMatchingPatternResolver;
 import com.hellobike.finance.flow.engine.utils.StringUtils;
@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
@@ -43,13 +42,13 @@ public class FlowEngineExecutor {
     public FlowEngineExecutor(FlowConfiguration configuration) throws FlowLoadException, FlowParseException, FlowBuildException {
         this.configuration = configuration;
         this.pathMatchingPatternResolver = new PathMatchingPatternResolver();
-        loadDefinition();
-        for (Map.Entry<String, FlowDefinition> entry : FLOW_DEFINITION_CACHE.entrySet()) {
+        flowDefinitionLoad();
+        FLOW_DEFINITION_CACHE.forEach((name, definition) -> {
             Flow flow = new Flow();
-            flow.build(entry.getValue(), configuration);
+            flow.build(definition, configuration);
             FLOW_CACHE.put(flow.getName(), flow);
             LOG.info("Build Flow [" + flow.getName() + "] Success!");
-        }
+        });
     }
 
     /**
@@ -152,20 +151,24 @@ public class FlowEngineExecutor {
         }
     }
 
-    private void loadDefinition() throws FlowLoadException {
+    private void flowDefinitionLoad() throws FlowLoadException {
         File[] files;
         try {
             files = pathMatchingPatternResolver.getMatchFiles(configuration.getFlowDefinitionPath());
         } catch (FileNotFoundException e) {
+            throw new FlowLoadException("无匹配的流程定义文件 path:[ " + configuration.getFlowDefinitionPath() + " ]!", e);
+        } catch (Exception e) {
             throw new FlowLoadException("获取流程定义文件异常!", e);
         }
         if (files == null || files.length == 0) {
-            throw new FlowLoadException("无匹配的流程定义文件!");
+            LOG.warn("无匹配的流程定义文件");
+            return;
         }
-        Map<String, FlowLoader> flowLoaderMap = FlowServiceLoader.getLoader(FlowLoader.class).getExtensionList();
+        Map<String, FlowDefinitionLoader> flowLoaderMap = FlowServiceLoader.getLoader(FlowDefinitionLoader.class).getExtensionList();
         for (File file : files) {
-            String suffix = file.getName().substring(file.getName().lastIndexOf('.') + 1);
-            FlowLoader loader = flowLoaderMap.get(suffix.toLowerCase());
+            String fileName = file.getName();
+            String fileSuffix = fileName.substring(fileName.lastIndexOf('.') + 1);
+            FlowDefinitionLoader loader = flowLoaderMap.get(fileSuffix.toLowerCase());
             if (loader == null) {
                 LOG.warn("[{}]文件类型不支持,过滤加载!", file.getName());
                 continue;
@@ -177,9 +180,7 @@ public class FlowEngineExecutor {
                 if (configuration.getAutoGeneratorFlowGraphFile()) {
                     GeneratorMermaidUtils.generatorMermaidFile(file, definition);
                 }
-            } catch (IOException e) {
-                LOG.warn("读取[{}]文件内容异常!", file.getName());
-            } catch (FlowLoadException loadException) {
+            } catch (Exception loadException) {
                 LOG.warn("加载[{}]文件内容异常!", file.getName());
             }
         }

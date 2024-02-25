@@ -5,7 +5,7 @@ package com.hellobike.finance.flow.engine.exception;
  *
  * @author 徐磊080
  */
-public class FlowParseException extends Exception {
+public class FlowParseException extends RuntimeException {
 
     public FlowParseException() {
     }

@@ -28,12 +28,12 @@ public class FlowNodeResult {
     /**
      * 节点执行是否成功
      */
-    private Boolean success = true;
+    private Boolean success;
 
     /**
      * 错误信息
      */
-    private Exception exception;
+    private String exceptionStack;
 
     /**
      * 节点执行耗时(ms)

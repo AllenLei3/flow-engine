@@ -17,6 +17,8 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -85,7 +87,7 @@ public abstract class FlowNode implements FlowElement<FlowNodeDefinition> {
      * @param response 流程执行结果
      * @return 要执行的下一个节点
      */
-    public FlowNode executeAndGetNextNode(FlowContext context, FlowResponse response) {
+    public final FlowNode executeAndGetNextNode(FlowContext context, FlowResponse response) {
         LOG.debug("flow [{}] prepare to execute node [{}]", response.getFlowName(), name);
         long start = System.currentTimeMillis();
         response.setCurrentFlowNodeName(name);
@@ -96,13 +98,12 @@ public abstract class FlowNode implements FlowElement<FlowNodeDefinition> {
         // 执行节点自身逻辑
         try {
             execute(context);
-            nodeExtension(context, nodeResult);
+            nodeExtension(context, nodeResult, response);
             nodeResult.setSuccess(true);
-            response.setStatus(getNodeExecuteStatus());
         } catch (Exception e) {
             LOG.error("flow [{}] execute node [{}] occur Error!", response.getFlowName(), name, e);
             nodeResult.setSuccess(false);
-            nodeResult.setException(e);
+            nodeResult.setExceptionStack(getStackTrace(e));
             response.setStatus(FlowStatus.FAIL);
             return null;
         } finally {
@@ -123,14 +124,7 @@ public abstract class FlowNode implements FlowElement<FlowNodeDefinition> {
     /**
      * 自定义扩展逻辑
      */
-    protected void nodeExtension(FlowContext context, FlowNodeResult nodeResult) {}
-
-    /**
-     * 获取节点执行状态
-     */
-    protected FlowStatus getNodeExecuteStatus() {
-        return FlowStatus.RUN;
-    }
+    protected void nodeExtension(FlowContext context, FlowNodeResult nodeResult, FlowResponse response) {}
 
     /**
      * 获取当前节点后续要执行的节点
@@ -139,6 +133,13 @@ public abstract class FlowNode implements FlowElement<FlowNodeDefinition> {
      */
     protected FlowNode getNextNode(FlowContext context) {
         return targetLines.isEmpty() ? null : targetLines.get(0).getTargetNode();
+    }
+
+    private String getStackTrace(Throwable throwable) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw, true);
+        throwable.printStackTrace(pw);
+        return sw.toString();
     }
 
     @Override

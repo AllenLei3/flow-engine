@@ -1,7 +1,7 @@
 package com.hellobike.finance.flow.engine.spi;
 
 import com.hellobike.finance.flow.engine.spi.instance.InstanceFactory;
-import com.hellobike.finance.flow.engine.spi.load.LoadStrategy;
+import com.hellobike.finance.flow.engine.utils.ClassLoaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.StreamSupport;
@@ -34,7 +35,7 @@ public class FlowServiceLoader<T> {
 
     private static final ConcurrentMap<Class<?>, FlowServiceLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<>(8);
     private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>(64);
-    private static final LoadStrategy[] strategies = loadLoadingStrategies();
+    private static final SpiLoadStrategy[] strategies = loadLoadingStrategies();
     private static final InstanceFactory INSTANCE_FACTORY = FlowServiceLoader.getLoader(InstanceFactory.class).getExtension();
 
     /**
@@ -181,10 +182,10 @@ public class FlowServiceLoader<T> {
     /**
      * 通过JDK提供的SPI机制获取{@code LoadingStrategy}接口的所有实现类
      */
-    private static LoadStrategy[] loadLoadingStrategies() {
-        return StreamSupport.stream(java.util.ServiceLoader.load(LoadStrategy.class).spliterator(), false)
+    private static SpiLoadStrategy[] loadLoadingStrategies() {
+        return StreamSupport.stream(ServiceLoader.load(SpiLoadStrategy.class).spliterator(), false)
                 .sorted()
-                .toArray(LoadStrategy[]::new);
+                .toArray(SpiLoadStrategy[]::new);
     }
 
     /**
@@ -206,7 +207,7 @@ public class FlowServiceLoader<T> {
 
     private Map<String, Class<T>> loadExtensionClasses() {
         Map<String, Class<T>> extensionClasses = new HashMap<>();
-        for (LoadStrategy strategy : strategies) {
+        for (SpiLoadStrategy strategy : strategies) {
             loadDirectory(extensionClasses, strategy.directory(), strategy.overridden(), strategy.excludedPackages());
         }
         return extensionClasses;
@@ -217,7 +218,7 @@ public class FlowServiceLoader<T> {
         String fileName = dir + type.getName();
         try {
             Enumeration<URL> urls;
-            ClassLoader classLoader = getDefaultClassLoader();
+            ClassLoader classLoader = ClassLoaderUtils.getDefaultClassLoader();
             if (classLoader != null) {
                 urls = classLoader.getResources(fileName);
             } else {
