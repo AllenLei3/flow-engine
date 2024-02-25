@@ -2,65 +2,65 @@
 <flow name="70004LoanFlow">
     <nodes>
         <node name = 'CommonLoanNode'
-              className = 'com.hellobike.finance.flow.engine.load.node.CommonLoanNode'
+              className = 'com.hellobike.finance.flow.engine.node.CommonLoanNode'
               description = '借款通用处理'/>
 
         <node name = 'CommonLoanFailedNode'
-              className = 'com.hellobike.finance.flow.engine.load.node.CommonLoanFailedNode'
+              className = 'com.hellobike.finance.flow.engine.node.CommonLoanFailedNode'
               description = '借款失败处理'/>
 
         <node name = 'UploadGuarantorCreditAgreementNode'
-              className = 'com.hellobike.finance.flow.engine.load.node.UploadGuarantorCreditAgreementNode'
+              className = 'com.hellobike.finance.flow.engine.node.UploadGuarantorCreditAgreementNode'
               type = 'SUSPEND'
               description = '上传融担【授信协议】'/>
 
         <node name = 'GuarantorCreditAgreementCallbackNode'
-              className = 'com.hellobike.finance.flow.engine.load.callback.GuarantorCreditAgreementCallbackNode'
+              className = 'com.hellobike.finance.flow.engine.callback.GuarantorCreditAgreementCallbackNode'
               type = 'SWITCH'
               description = '上传融担【授信协议】回调'/>
 
         <node name = 'GuarantorCreditAgreementJobNode'
-              className = 'com.hellobike.finance.flow.engine.load.job.GuarantorCreditAgreementJobNode'
+              className = 'com.hellobike.finance.flow.engine.job.GuarantorCreditAgreementJobNode'
               type = 'SWITCH'
               description = '上传融担【授信协议】主动查询'/>
 
         <node name = 'UploadGuarantorImageNode'
-              className = 'com.hellobike.finance.flow.engine.load.node.UploadGuarantorImageNode'
+              className = 'com.hellobike.finance.flow.engine.node.UploadGuarantorImageNode'
               type = 'SUSPEND'
               description = '上传融担【影像资料】'/>
 
         <node name = 'GuarantorImageCallbackNode'
-              className = 'com.hellobike.finance.flow.engine.load.callback.GuarantorImageCallbackNode'
+              className = 'com.hellobike.finance.flow.engine.callback.GuarantorImageCallbackNode'
               type = 'SWITCH'
               description = '上传融担【影像资料】回调'/>
 
         <node name = 'GuarantorImageJobNode'
-              className = 'com.hellobike.finance.flow.engine.load.job.GuarantorImageJobNode'
+              className = 'com.hellobike.finance.flow.engine.job.GuarantorImageJobNode'
               type = 'SWITCH'
               description = '上传融担【影像资料】主动查询'/>
 
         <node name = 'GuarantorCreditApplyNode'
-              className = 'com.hellobike.finance.flow.engine.load.node.GuarantorCreditApplyNode'
+              className = 'com.hellobike.finance.flow.engine.node.GuarantorCreditApplyNode'
               type = 'SUSPEND'
               description = '发起融担授信申请'/>
 
         <node name = 'GuarantorCreditApplyJobNode'
-              className = 'com.hellobike.finance.flow.engine.load.job.GuarantorCreditApplyJobNode'
+              className = 'com.hellobike.finance.flow.engine.job.GuarantorCreditApplyJobNode'
               type = 'SWITCH'
               description = '融担授信申请主动查询'/>
 
         <node name = 'FunderLoanApplyNode'
-              className = 'com.hellobike.finance.flow.engine.load.node.FunderLoanApplyNode'
+              className = 'com.hellobike.finance.flow.engine.node.FunderLoanApplyNode'
               type = 'SUSPEND'
               description = '发起资方放款申请'/>
 
         <node name = 'FunderLoanApplyJobNode'
-              className = 'com.hellobike.finance.flow.engine.load.job.FunderLoanApplyJobNode'
+              className = 'com.hellobike.finance.flow.engine.job.FunderLoanApplyJobNode'
               type = 'SWITCH'
               description = '资方放款申请主动查询'/>
 
         <node name = 'CommonLoanSuccessNode'
-              className = 'com.hellobike.finance.flow.engine.load.node.CommonLoanSuccessNode'
+              className = 'com.hellobike.finance.flow.engine.node.CommonLoanSuccessNode'
               description = '借款申请成功'/>
 
     </nodes>

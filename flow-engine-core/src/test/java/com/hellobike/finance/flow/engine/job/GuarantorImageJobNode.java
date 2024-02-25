@@ -1,15 +1,15 @@
-package com.hellobike.finance.flow.engine.load.callback;
+package com.hellobike.finance.flow.engine.job;
 
 import com.hellobike.finance.flow.engine.exception.FlowExecuteException;
 import com.hellobike.finance.flow.engine.execute.FlowContext;
-import com.hellobike.finance.flow.engine.load.TestContext;
-import com.hellobike.finance.flow.engine.load.common.Constants;
+import com.hellobike.finance.flow.engine.TestContext;
+import com.hellobike.finance.flow.engine.common.Constants;
 import com.hellobike.finance.flow.engine.model.node.SwitchFlowNode;
 
 /**
  * @author xulei
  */
-public class GuarantorImageCallbackNode extends SwitchFlowNode {
+public class GuarantorImageJobNode extends SwitchFlowNode {
 
     @Override
     protected void execute(FlowContext context) throws FlowExecuteException {

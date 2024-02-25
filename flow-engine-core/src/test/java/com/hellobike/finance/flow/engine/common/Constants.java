@@ -1,4 +1,4 @@
-package com.hellobike.finance.flow.engine.load.common;
+package com.hellobike.finance.flow.engine.common;
 
 /**
  * @author xulei
