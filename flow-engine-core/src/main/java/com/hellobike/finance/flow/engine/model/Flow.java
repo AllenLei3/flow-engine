@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.Function;
@@ -108,22 +109,8 @@ public final class Flow implements Serializable {
      * @return 节点对象实体
      */
     public FlowNode searchNode(String flowNodeName) {
-        return dfs(flowNodeName, origin);
-    }
-
-    private FlowNode dfs(String flowNodeName, FlowNode parent) {
-        if (parent.getName().equals(flowNodeName)) {
-            return parent;
-        }
-        while (!parent.getTargetLines().isEmpty()) {
-            for (FlowLine line : parent.getTargetLines()) {
-                FlowNode node = dfs(flowNodeName, line.getTargetNode());
-                if (node != null) {
-                    return node;
-                }
-            }
-        }
-        return null;
+        Optional<FlowNode> flowNode = nodes.stream().filter(node -> node.getName().equals(flowNodeName)).findFirst();
+        return flowNode.orElse(null);
     }
 
     private void parseFlowDefinition(FlowDefinition definition) throws FlowParseException {

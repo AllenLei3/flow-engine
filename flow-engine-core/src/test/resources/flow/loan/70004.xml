@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow name="70004LoanFlow">
+    <nodes>
+        <node name = 'CommonLoanNode'
+              className = 'com.hellobike.finance.flow.engine.load.node.CommonLoanNode'
+              description = '借款通用处理'/>
+
+        <node name = 'CommonLoanFailedNode'
+              className = 'com.hellobike.finance.flow.engine.load.node.CommonLoanFailedNode'
+              description = '借款失败处理'/>
+
+        <node name = 'UploadGuarantorCreditAgreementNode'
+              className = 'com.hellobike.finance.flow.engine.load.node.UploadGuarantorCreditAgreementNode'
+              type = 'SUSPEND'
+              description = '上传融担【授信协议】'/>
+
+        <node name = 'GuarantorCreditAgreementCallbackNode'
+              className = 'com.hellobike.finance.flow.engine.load.callback.GuarantorCreditAgreementCallbackNode'
+              type = 'SWITCH'
+              description = '上传融担【授信协议】回调'/>
+
+        <node name = 'GuarantorCreditAgreementJobNode'
+              className = 'com.hellobike.finance.flow.engine.load.job.GuarantorCreditAgreementJobNode'
+              type = 'SWITCH'
+              description = '上传融担【授信协议】主动查询'/>
+
+        <node name = 'UploadGuarantorImageNode'
+              className = 'com.hellobike.finance.flow.engine.load.node.UploadGuarantorImageNode'
+              type = 'SUSPEND'
+              description = '上传融担【影像资料】'/>
+
+        <node name = 'GuarantorImageCallbackNode'
+              className = 'com.hellobike.finance.flow.engine.load.callback.GuarantorImageCallbackNode'
+              type = 'SWITCH'
+              description = '上传融担【影像资料】回调'/>
+
+        <node name = 'GuarantorImageJobNode'
+              className = 'com.hellobike.finance.flow.engine.load.job.GuarantorImageJobNode'
+              type = 'SWITCH'
+              description = '上传融担【影像资料】主动查询'/>
+
+        <node name = 'GuarantorCreditApplyNode'
+              className = 'com.hellobike.finance.flow.engine.load.node.GuarantorCreditApplyNode'
+              type = 'SUSPEND'
+              description = '发起融担授信申请'/>
+
+        <node name = 'GuarantorCreditApplyJobNode'
+              className = 'com.hellobike.finance.flow.engine.load.job.GuarantorCreditApplyJobNode'
+              type = 'SWITCH'
+              description = '融担授信申请主动查询'/>
+
+        <node name = 'FunderLoanApplyNode'
+              className = 'com.hellobike.finance.flow.engine.load.node.FunderLoanApplyNode'
+              type = 'SUSPEND'
+              description = '发起资方放款申请'/>
+
+        <node name = 'FunderLoanApplyJobNode'
+              className = 'com.hellobike.finance.flow.engine.load.job.FunderLoanApplyJobNode'
+              type = 'SWITCH'
+              description = '资方放款申请主动查询'/>
+
+        <node name = 'CommonLoanSuccessNode'
+              className = 'com.hellobike.finance.flow.engine.load.node.CommonLoanSuccessNode'
+              description = '借款申请成功'/>
+
+    </nodes>
+    <lines>
+        <line sourceNodeName = 'CommonLoanNode' targetNodeName = 'UploadGuarantorCreditAgreementNode'/>
+        <line sourceNodeName = 'UploadGuarantorCreditAgreementNode' targetNodeName = 'GuarantorCreditAgreementCallbackNode'/>
+        <line sourceNodeName = 'UploadGuarantorCreditAgreementNode' targetNodeName = 'GuarantorCreditAgreementJobNode'/>
+        <line sourceNodeName = 'GuarantorCreditAgreementCallbackNode' targetNodeName = 'UploadGuarantorImageNode' switchValue="success"/>
+        <line sourceNodeName = 'GuarantorCreditAgreementCallbackNode' targetNodeName = 'CommonLoanFailedNode' switchValue="failed" defaultLine="true"/>
+        <line sourceNodeName = 'GuarantorCreditAgreementJobNode' targetNodeName = 'UploadGuarantorImageNode' switchValue="success"/>
+        <line sourceNodeName = 'GuarantorCreditAgreementJobNode' targetNodeName = 'CommonLoanFailedNode' switchValue="failed" defaultLine="true"/>
+        <line sourceNodeName = 'UploadGuarantorImageNode' targetNodeName = 'GuarantorImageCallbackNode'/>
+        <line sourceNodeName = 'UploadGuarantorImageNode' targetNodeName = 'GuarantorImageJobNode'/>
+        <line sourceNodeName = 'GuarantorImageCallbackNode' targetNodeName = 'GuarantorCreditApplyNode' switchValue="success"/>
+        <line sourceNodeName = 'GuarantorImageCallbackNode' targetNodeName = 'CommonLoanFailedNode' switchValue="failed" defaultLine="true"/>
+        <line sourceNodeName = 'GuarantorImageJobNode' targetNodeName = 'GuarantorCreditApplyNode' switchValue="success"/>
+        <line sourceNodeName = 'GuarantorImageJobNode' targetNodeName = 'CommonLoanFailedNode' switchValue="failed" defaultLine="true"/>
+        <line sourceNodeName = 'GuarantorCreditApplyNode' targetNodeName = 'GuarantorCreditApplyJobNode'/>
+        <line sourceNodeName = 'GuarantorCreditApplyJobNode' targetNodeName = 'FunderLoanApplyNode' switchValue="success"/>
+        <line sourceNodeName = 'GuarantorCreditApplyJobNode' targetNodeName = 'CommonLoanFailedNode' switchValue="failed" defaultLine="true"/>
+        <line sourceNodeName = 'FunderLoanApplyNode' targetNodeName = 'FunderLoanApplyJobNode'/>
+        <line sourceNodeName = 'FunderLoanApplyJobNode' targetNodeName = 'CommonLoanSuccessNode' switchValue="success"/>
+        <line sourceNodeName = 'FunderLoanApplyJobNode' targetNodeName = 'CommonLoanFailedNode' switchValue="failed" defaultLine="true"/>
+    </lines>
+</flow>

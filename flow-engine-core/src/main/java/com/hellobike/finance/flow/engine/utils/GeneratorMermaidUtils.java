@@ -101,13 +101,16 @@ public class GeneratorMermaidUtils {
         }
     }
 
-    // 固定生成在源文件的相对位置
     private static String getMermaidFilePath(File file) {
         String originalPath = file.getPath();
-        String targetClz = "target/classes/";
+        boolean testDir = originalPath.contains("target/test-classes/");
+        String targetClz = testDir ? "target/test-classes/" : "target/classes/";
+        String targetDir = testDir ? "src/test/resources" : "src/main/resources";
+        // 拼接文件所在目录
         String prefix = originalPath.substring(0, originalPath.lastIndexOf(targetClz));
         String suffix = originalPath.substring(originalPath.lastIndexOf(targetClz) + targetClz.length() - 1);
         suffix = suffix.substring(0, suffix.lastIndexOf("."))+".md";
-        return prefix + "src/main/resources" + suffix;
+        return prefix + targetDir + suffix;
+
     }
 }
